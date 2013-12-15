@@ -1,0 +1,8 @@
+actors:
+  - "127.0.0.1:18800"
+policy: "even" #even,random,safe-random
+timeout: 3600
+get_interval: 0.2
+auth:
+  shared_key: "a pre-shared key"
+  timeout: 30
