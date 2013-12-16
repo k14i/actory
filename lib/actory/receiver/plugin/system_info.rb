@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Lib
+class Plugin
 
   def system_info
     info = {

@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Lib
+class Plugin
 
   def pi(len=2)
     len = len.to_i unless len.class == Fixnum
