@@ -1,6 +1,5 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
-gem 'rubygems'
 gem 'msgpack-rpc'
 gem 'parallel'
 gem 'facter'

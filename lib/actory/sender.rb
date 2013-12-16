@@ -3,5 +3,5 @@ module Actory
   end
 end
 
-require_relative 'sender/runner'
+Dir[File.join(File.dirname(__FILE__), "sender/*.rb")].each { |f| require_relative f }
 SENDER = YAML.load_file(File.expand_path("../../../config/sender.yml", __FILE__))
