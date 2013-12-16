@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Lib
+class Plugin
 
   def auth?(shared_key)
     RECEIVER['shared_key'] == shared_key

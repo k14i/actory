@@ -5,9 +5,9 @@ class EventHandler
 
   def receive(method, arg=nil, results=[])
     if arg
-      results << Actory::Receiver::Lib.new.send(method, arg)
+      results << Actory::Receiver::Plugin.new.send(method, arg)
     else
-      results << Actory::Receiver::Lib.new.send(method)
+      results << Actory::Receiver::Plugin.new.send(method)
     end
     return results
   rescue => e

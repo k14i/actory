@@ -11,7 +11,10 @@ begin
       puts "#{k} returned #{v}"
     end
   end
-rescue
-  retry
+rescue => e
+  @num == nil ? @num = 0 : @num += 1
+  puts e
+  sleep 1
+  retry if @num < 2
 end
 
