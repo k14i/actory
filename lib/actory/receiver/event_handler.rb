@@ -4,11 +4,9 @@ module Receiver
 class EventHandler
 
   def receive(method, arg=nil, results=[])
-    if arg
-      results << Actory::Receiver::Plugin.new.send(method, arg)
-    else
-      results << Actory::Receiver::Plugin.new.send(method)
-    end
+    #Dir.glob('./plugin/*.rb').each { |f| load f }
+    plugin = Actory::Receiver::Plugin.new
+    arg ? results << plugin.send(method, arg) : results << plugin.send(method)
     return results
   rescue => e
     raise StandardError, e
