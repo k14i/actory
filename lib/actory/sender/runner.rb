@@ -21,6 +21,7 @@ class Runner
     results << Parallel.map(assignment, :in_processes => @receiver_count) do |arg, actor|
       print '.'
       begin
+        actor.send("receive", "reload")
         res = actor.send("receive", method, arg)
         sleep SENDER['get_interval']
         ret = res.get
@@ -47,7 +48,6 @@ class Runner
       ret = get_trusted_hosts(host)
       next unless ret
       @system_info << {:host => host, :system_info => get_system_info}
-p @system_info
       get_receiver_count
     end
   end

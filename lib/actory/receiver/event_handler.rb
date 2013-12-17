@@ -4,7 +4,6 @@ module Receiver
 class EventHandler
 
   def receive(method, arg=nil, results=[])
-    #Dir.glob('./plugin/*.rb').each { |f| load f }
     plugin = Actory::Receiver::Plugin.new
     arg ? results << plugin.send(method, arg) : results << plugin.send(method)
     return results
