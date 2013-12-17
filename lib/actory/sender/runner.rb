@@ -2,12 +2,13 @@ module Actory
 module Sender
 
 class Runner
-  attr_accessor :actors, :trusted_hosts, :receiver_count, :my_processor_count
+  attr_accessor :actors, :trusted_hosts, :system_info, :receiver_count, :my_processor_count
 
   def initialize
     @actors = []
     @trusted_hosts = []
     @receiver_count = 0
+    @system_info = []
     @my_processor_count = Parallel.processor_count
     initial_handshaking
     establish_connections
@@ -20,6 +21,7 @@ class Runner
     results << Parallel.map(assignment, :in_processes => @receiver_count) do |arg, actor|
       print '.'
       begin
+        actor.send("receive", "reload")
         res = actor.send("receive", method, arg)
         sleep SENDER['get_interval']
         ret = res.get
@@ -45,6 +47,7 @@ class Runner
       @cli.timeout = SENDER['auth']['timeout']
       ret = get_trusted_hosts(host)
       next unless ret
+      @system_info << {:host => host, :system_info => get_system_info}
       get_receiver_count
     end
   end
@@ -90,6 +93,11 @@ class Runner
   def get_trusted_hosts(host)
     res = @cli.send("receive", "auth?", SENDER['auth']['shared_key'])
     res.get[0] ? @trusted_hosts << host : nil
+  end
+
+  def get_system_info
+    res = @cli.send("receive", "system_info")
+    res.get[0]
   end
 
   def get_receiver_count
