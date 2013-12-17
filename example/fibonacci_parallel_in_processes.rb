@@ -1,16 +1,22 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/actory'
+require_relative '../lib/actory/receiver/plugin/example_fibonacci'
 require_relative './lib/benchmark'
+require 'parallel'
+
+res = []
 
 ret, time = Benchmark.measure do
   begin
-    runner = Actory::Sender::Runner.new
+    plugin = Actory::Receiver::Plugin.new
     args = (1..34).to_a
-    res = runner.message("fibonacci", args)
+    res << Parallel.map(args, :in_processes => Parallel.processor_count) do |arg|
+      print "."
+      plugin.fibonacci(arg)
+    end
     res.each do |r|
-      r.each do |k,v|
-        puts "#{k} returned #{v}"
+      r.each do |v|
+        puts "returned #{v}"
       end
     end
   rescue => e

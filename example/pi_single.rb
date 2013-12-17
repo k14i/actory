@@ -1,16 +1,21 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/actory'
+require_relative '../lib/actory/receiver/plugin/example_pi'
 require_relative './lib/benchmark'
+
+res = []
 
 ret, time = Benchmark.measure do
   begin
-    runner = Actory::Sender::Runner.new
-    args = (1..34).to_a
-    res = runner.message("fibonacci", args)
+    plugin = Actory::Receiver::Plugin.new
+    args = (1..1000).to_a
+    res << args.map do |arg|
+      print "."
+      plugin.pi(arg)
+    end
     res.each do |r|
-      r.each do |k,v|
-        puts "#{k} returned #{v}"
+      r.each do |v|
+        puts "returned #{v}"
       end
     end
   rescue => e
