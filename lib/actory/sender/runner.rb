@@ -18,8 +18,16 @@ class Runner
     args = [nil] if args.empty?
     assignment = assign_jobs(args)
 
+    pbar = ProgressBar.new(method, @receiver_count) if SENDER['show_progress']
+
     results << Parallel.map(assignment, :in_processes => @receiver_count) do |arg, actor|
-      print '.'
+      if SENDER['show_progress']
+        begin
+          pbar.set pbar.current + 1 if pbar.current <= @receiver_count
+        rescue
+        end
+      end
+
       begin
         actor.send("receive", "reload")
         res = actor.send("receive", method, arg)
@@ -32,7 +40,7 @@ class Runner
         retry
       end
     end
-    return results.flatten
+    results.flatten
   end
 
   private
@@ -129,7 +137,7 @@ class Runner
     else
       actors = @actors
     end
-    return actors
+    actors
   end
 
   def change_actor(previous_actor)
@@ -138,7 +146,7 @@ class Runner
       new_actor = @actors.sample
       break unless new_actor == previous_actor
     end
-    return new_actor
+    new_actor
   end
 
 end
