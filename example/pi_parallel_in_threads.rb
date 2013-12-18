@@ -11,14 +11,14 @@ require_relative './lib/benchmark'
 
 res = []
 processor_count = Parallel.processor_count
-pbar = ProgressBar.new(METHOD, processor_count / 2)
+pbar = ProgressBar.new(METHOD, processor_count)
 
 ret, time = Benchmark.measure do
   begin
     plugin = Actory::Receiver::Plugin.new
     res << Parallel.map(ARGS, :in_threads => processor_count) do |arg|
       begin
-        pbar.set pbar.current + 1 if pbar.current <= processor_count / 2
+        pbar.set pbar.current + 1 if pbar.current <= processor_count
       rescue
       end
       plugin.send(METHOD, arg)
