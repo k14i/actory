@@ -1,23 +1,30 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/actory/receiver/plugin/example_prime'
-require_relative './lib/benchmark'
 require 'parallel'
+require 'progressbar'
+
+METHOD = "prime"
+ARGS   = (1..1000).to_a
+
+require_relative "../lib/actory/receiver/plugin/example_#{METHOD}"
+require_relative './lib/benchmark'
 
 res = []
+processor_count = Parallel.processor_count
+pbar = ProgressBar.new(METHOD, processor_count / 2)
 
 ret, time = Benchmark.measure do
   begin
     plugin = Actory::Receiver::Plugin.new
-    args = (1..1000).to_a
-    res << Parallel.map(args, :in_threads => Parallel.processor_count) do |arg|
-      print "."
-      plugin.prime(arg)
-    end
-    res.each do |r|
-      r.each do |v|
-        puts "returned #{v}"
+    res << Parallel.map(ARGS, :in_threads => processor_count) do |arg|
+      begin
+        pbar.set pbar.current + 1 if pbar.current <= processor_count / 2
+      rescue
       end
+      plugin.send(METHOD, arg)
+    end
+    res.each do |v|
+      puts "returned #{v}"
     end
   rescue => e
     @num == nil ? @num = 0 : @num += 1
