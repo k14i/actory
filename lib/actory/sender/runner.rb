@@ -11,7 +11,10 @@ class Runner
     @system_info = []
     @my_processor_count = Parallel.processor_count
     initial_handshaking(actors)
-    establish_connections
+    count = establish_connections
+    exit 1 if count == 0
+  rescue => e
+    puts $@, e
   end
 
   def message(method, args=[], results=[])
@@ -59,6 +62,8 @@ class Runner
       @system_info << {:host => host, :system_info => get_system_info}
       get_receiver_count
     end
+  rescue => e
+    puts $@, e
   end
 
   def establish_connections
@@ -68,23 +73,26 @@ class Runner
     when "random"
       establish_connections_randomly(@receiver_count)
     when "safe-random"
+      return 0 if @trusted_hosts.empty?
       establish_connections_randomly(@my_processor_count / @trusted_hosts.count)
     else
       establish_connections_evenly
     end
+    @actors.count
   end
 
-  def establish_connections_randomly(num=1)
+  def establish_connections_randomly(num=0)
     establish_connections_helper(num)
   end
 
   def establish_connections_evenly
+    return nil if @trusted_hosts.empty?
     cores_per_host = @my_processor_count / @trusted_hosts.count
     cores_per_host = 1 if cores_per_host <= 0
     establish_connections_helper(cores_per_host)
   end
 
-  def establish_connections_helper(num=1)
+  def establish_connections_helper(num=0)
     num.times do |n|
       SENDER['actors'].each do |actor|
         next unless actor.class == String
@@ -102,6 +110,9 @@ class Runner
   def get_trusted_hosts(host)
     res = @cli.send("receive", "auth?", SENDER['auth']['shared_key'])
     res.get[0] ? @trusted_hosts << host : nil
+  rescue => e
+    puts "WARNING: #{e} with #{host}"
+    return nil
   end
 
   def get_system_info
