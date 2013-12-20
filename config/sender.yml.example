@@ -8,3 +8,6 @@ auth:
   timeout: 30
 show_progress: true
 reload_receiver_plugins: true
+log:
+  type: "stdout"
+  level: "error"

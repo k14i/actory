@@ -1,7 +1,7 @@
 module Actory
 module Sender
 
-class Runner
+class Runner < Base
   attr_accessor :actors, :trusted_hosts, :system_info, :receiver_count, :my_processor_count
 
   def initialize(actors: [])
@@ -11,11 +11,13 @@ class Runner
     @system_info = []
     @my_processor_count = Parallel.processor_count
     ret = initial_handshaking(actors)
-    exit 1 if ret == 0
+    raise StandardError if ret == 0
     count = establish_connections
-    exit 1 if count == 0
+    raise StandardError if count == 0
   rescue => e
-    puts $@, e
+    msg = Actory::Errors::Generator.new.json(level: "error", message: "Initialization failed.", backtrace: $@)
+    @@logger.error msg
+    exit 1
   end
 
   def message(method, args=[], results=[])
