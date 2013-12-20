@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Plugin
+class Plugin < Base
 
   def processor_count
     return Parallel.processor_count

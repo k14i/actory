@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Plugin
+class Plugin < Base
 
   def pi(len=2)
     raise StandardError unless [Fixnum, String].include?(len.class)

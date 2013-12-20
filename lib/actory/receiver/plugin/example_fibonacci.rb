@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Plugin
+class Plugin < Base
 
   def fibonacci(num=10)
     raise StandardError unless [Fixnum, String].include?(num.class)

@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class Plugin
+class Plugin < Base
 
   def reload
     Dir[File.join(File.dirname(__FILE__), "./*.rb")].each { |f| load f }
