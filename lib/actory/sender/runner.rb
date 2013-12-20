@@ -10,7 +10,8 @@ class Runner
     @receiver_count = 0
     @system_info = []
     @my_processor_count = Parallel.processor_count
-    initial_handshaking(actors)
+    ret = initial_handshaking(actors)
+    exit 1 if ret == 0
     count = establish_connections
     exit 1 if count == 0
   rescue => e
@@ -50,7 +51,7 @@ class Runner
   private
 
   def initial_handshaking(actors=[])
-    actors = SENDER['actors'] if actors.empty?
+    actors = SENDER['actors'] if actors.empty? and SENDER['actors'].nil? == false
     actors.each do |actor|
       next unless actor.class == String
       actor = actor.gsub(/:/, " ").split
