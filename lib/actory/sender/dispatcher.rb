@@ -1,7 +1,7 @@
 module Actory
 module Sender
 
-class Runner < Base
+class Dispatcher < Base
   attr_accessor :actors, :trusted_hosts, :system_info, :receiver_count, :my_processor_count
 
   def initialize(actors: [])

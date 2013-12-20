@@ -8,8 +8,8 @@ ARGS   = (1..1000).to_a
 
 ret, time = Benchmark.measure do
   begin
-    runner = Actory::Sender::Runner.new
-    res = runner.message(METHOD, ARGS)
+    dispatcher = Actory::Sender::Dispatcher.new
+    res = dispatcher.message(METHOD, ARGS)
     res.each do |r|
       r.each do |k,v|
         puts "#{k} returned #{v}"
