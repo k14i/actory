@@ -108,6 +108,7 @@ class Runner < Base
         @actors << cli
       end
     end
+    @@logger.debug @actors
   end
 
   def get_trusted_hosts(host)
@@ -139,21 +140,22 @@ class Runner < Base
       num += 1
       params.merge!(arg => actor)
     end
+    @@logger.debug params
     params
   end
 
-  def select_actors
-    actors = nil
-    case SENDER['policy']
-    when "even"
-      actors = @actors
-    when "random", "safe-random"
-      actors = @actors.sample(@my_processor_count)
-    else
-      actors = @actors
-    end
-    actors
-  end
+  #def select_actors
+  #  actors = nil
+  #  case SENDER['policy']
+  #  when "even"
+  #    actors = @actors
+  #  when "random", "safe-random"
+  #    actors = @actors.sample(@my_processor_count)
+  #  else
+  #    actors = @actors
+  #  end
+  #  actors
+  #end
 
   def change_actor(previous_actor)
     new_actor = nil
