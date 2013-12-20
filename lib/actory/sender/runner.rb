@@ -4,13 +4,13 @@ module Sender
 class Runner
   attr_accessor :actors, :trusted_hosts, :system_info, :receiver_count, :my_processor_count
 
-  def initialize
+  def initialize(actors: [])
     @actors = []
     @trusted_hosts = []
     @receiver_count = 0
     @system_info = []
     @my_processor_count = Parallel.processor_count
-    initial_handshaking
+    initial_handshaking(actors)
     establish_connections
   end
 
@@ -29,7 +29,7 @@ class Runner
       end
 
       begin
-        actor.send("receive", "reload")
+        actor.send("receive", "reload") if SENDER['reload_receiver_plugins']
         res = actor.send("receive", method, arg)
         sleep SENDER['get_interval']
         ret = res.get
@@ -45,8 +45,9 @@ class Runner
 
   private
 
-  def initial_handshaking
-    SENDER['actors'].each do |actor|
+  def initial_handshaking(actors=[])
+    actors = SENDER['actors'] if actors.empty?
+    actors.each do |actor|
       next unless actor.class == String
       actor = actor.gsub(/:/, " ").split
       host = actor[0]
