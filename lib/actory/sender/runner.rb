@@ -38,7 +38,8 @@ class Runner
         ret = res.get
         ret.flatten!
         {actor.address.to_s => ret}
-      rescue
+      rescue => e
+        # puts "WARNING: #{e} with #{actor.address}"
         actor = change_actor(actor)
         retry
       end
