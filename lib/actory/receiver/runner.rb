@@ -1,18 +1,22 @@
 module Actory
 module Receiver
 
-class Runner
+class Runner < Base
   def initialize(protocol="tcp", target: nil)
     protocol = RECEIVER['protocol'] if RECEIVER['protocol']
     num = Parallel.processor_count
     target ||= Actory::Receiver::EventHandler
     Parallel.map(0..num, :in_processes => num) do |n|
+      @@logger.info "Starting Actory Receiver Runner ##{n + 1}/#{num} (PID = #{Process.pid}, PGROUP = #{Process.getpgrp}, protocol = #{protocol})"
+      is_retried = false
       begin
         runner = send(protocol, target, n)
         Signal.trap(:TERM) { runner.stop }
         Signal.trap(:INT) { runner.stop }
         runner.run
-      rescue
+      rescue => e
+        @@logger.error(Actory::Errors::Generator.new.json(level: "error", message: e, backtrace: $@)) unless is_retried
+        is_retried = true
         retry
       end
     end

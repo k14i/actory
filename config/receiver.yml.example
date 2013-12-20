@@ -2,3 +2,6 @@ protocol: "tcp"
 address: "0.0.0.0"
 port: 18800
 shared_key: "a pre-shared key"
+log:
+  type: "stdout"
+  level: "error"

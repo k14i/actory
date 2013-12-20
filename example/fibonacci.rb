@@ -3,11 +3,13 @@
 require_relative '../lib/actory'
 require_relative './lib/benchmark'
 
+METHOD = "fibonacci"
+ARGS   = (1..34).to_a
+
 ret, time = Benchmark.measure do
   begin
     runner = Actory::Sender::Runner.new
-    args = (1..34).to_a
-    res = runner.message("fibonacci", args)
+    res = runner.message(METHOD, ARGS)
     res.each do |r|
       r.each do |k,v|
         puts "#{k} returned #{v}"

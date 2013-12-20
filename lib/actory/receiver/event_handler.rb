@@ -1,7 +1,7 @@
 module Actory
 module Receiver
 
-class EventHandler
+class EventHandler < Base
 
   def receive(method, arg=nil, results=[])
     plugin = Actory::Receiver::Plugin.new
