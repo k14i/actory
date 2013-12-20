@@ -3,5 +3,6 @@ address: "0.0.0.0"
 port: 18800
 shared_key: "a pre-shared key"
 log:
-  type: "stdout"
-  level: "error"
+  type: "stdout" #stdout,file,both
+  level: "info" #fatal,error,warn,info,debug
+  target: "log/receiver.log"

@@ -1,3 +1,4 @@
+
 actors:
   - "127.0.0.1:18800"
 policy: "even" #even,random,safe-random
@@ -9,5 +10,6 @@ auth:
 show_progress: true
 reload_receiver_plugins: true
 log:
-  type: "stdout"
-  level: "error"
+  type: "stdout" #stdout,file,both
+  level: "info" #fatal,error,warn,info,debug
+  target: "log/sender.log"
