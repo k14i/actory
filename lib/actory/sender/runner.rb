@@ -15,8 +15,7 @@ class Runner < Base
     count = establish_connections
     raise StandardError if count == 0
   rescue => e
-    msg = Actory::Errors::Generator.new.json(level: "error", message: "Initialization failed.", backtrace: $@)
-    @@logger.error msg
+    @@logger.error Actory::Errors::Generator.new.json(level: "error", message: "Initialization failed.", backtrace: $@)
     exit 1
   end
 
@@ -42,7 +41,7 @@ class Runner < Base
         ret.flatten!
         {actor.address.to_s => ret}
       rescue => e
-        # puts "WARNING: #{e} with #{actor.address}"
+        @@logger.warn Actory::Errors::Generator.new.json(level: "warn", message: "Something wrong with sending a message to #{actor.address}", backtrace: $@)
         actor = change_actor(actor)
         retry
       end
@@ -115,7 +114,7 @@ class Runner < Base
     res = @cli.send("receive", "auth?", SENDER['auth']['shared_key'])
     res.get[0] ? @trusted_hosts << host : nil
   rescue => e
-    puts "WARNING: #{e} with #{host}"
+    @@logger.warn Actory::Errors::Generator.new.json(level: "warn", message: "#{__method__} failed with #{host}", backtrace: $@)
     return nil
   end
 
