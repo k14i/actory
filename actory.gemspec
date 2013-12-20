@@ -1,21 +1,24 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 
-Gem::Specification.new do |gem|
-  gem.name          = "actory"
-  gem.authors       = ["Keisuke Takahashi"]
-  gem.email         = ["keithseahus@gmail.com"]
-  gem.description   = %q{Actor model like, concurrent and distributed framework for Ruby.}
-  gem.summary       = %q{Actor model like, concurrent and distributed framework for Ruby.}
-  gem.homepage      = "https://github.com/keithseahus/actory"
-  gem.version       = "0.0.1"
-  gem.license       = "Apache 2.0"
+Gem::Specification.new do |s|
+  s.name          = "actory"
+  s.version       = "0.0.1"
+  s.summary       = %q{Actor model like, concurrent and distributed framework for Ruby.}
+  s.description   = %q{Actor model like, concurrent and distributed framework for Ruby.}
+  s.authors       = ["Keisuke Takahashi"]
+  s.email         = ["keithseahus@gmail.com"]
+  s.files         = `git ls-files`.split($\)
+  s.homepage      = "https://github.com/keithseahus/actory"
 
-  gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.require_paths = ["lib"]
+  s.license       = "Apache 2.0"
+  s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
+  s.require_paths = ["lib"]
 
-  requires += ['rake']
-  requires.each {|name| gem.add_development_dependency name}
+  requires += ['msgpack-rpc', 'parallel', 'facter', 'progressbar']
+  requires.each do |name|
+    s.add_development_dependency name
+    s.add_runtime_dependency name
+  end
 end
