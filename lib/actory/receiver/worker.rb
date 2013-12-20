@@ -1,19 +1,19 @@
 module Actory
 module Receiver
 
-class Runner < Base
+class Worker < Base
   def initialize(protocol="tcp", target: nil)
     protocol = RECEIVER['protocol'] if RECEIVER['protocol']
     num = Parallel.processor_count
     target ||= Actory::Receiver::EventHandler
     Parallel.map(0..num, :in_processes => num) do |n|
-      @@logger.info "Starting Actory Receiver Runner ##{n + 1}/#{num} (PID = #{Process.pid}, PGROUP = #{Process.getpgrp}, protocol = #{protocol})"
+      @@logger.info "Starting Actory Receiver Worker ##{n + 1}/#{num} (PID = #{Process.pid}, PGROUP = #{Process.getpgrp}, protocol = #{protocol})"
       is_retried = false
       begin
-        runner = send(protocol, target, n)
-        Signal.trap(:TERM) { runner.stop }
-        Signal.trap(:INT) { runner.stop }
-        runner.run
+        worker = send(protocol, target, n)
+        Signal.trap(:TERM) { worker.stop }
+        Signal.trap(:INT) { worker.stop }
+        worker.run
       rescue => e
         @@logger.error(Actory::Errors::Generator.new.json(level: "error", message: e, backtrace: $@)) unless is_retried
         is_retried = true
@@ -25,17 +25,17 @@ class Runner < Base
   private
 
   def tcp(target, num)
-    runner = MessagePack::RPC::Server.new
-    runner.listen(RECEIVER['address'], RECEIVER['port'] + num, target.new)
-    runner
+    worker = MessagePack::RPC::Server.new
+    worker.listen(RECEIVER['address'], RECEIVER['port'] + num, target.new)
+    worker
   end
 
   def udp(target, num)
     address  = MessagePack::RPC::Address.new(RECEIVER['address'], RECEIVER['port'] + num)
     listener = MessagePack::RPC::UDPServerTransport.new(address)
-    runner   = MessagePack::RPC::Server.new
-    runner.listen(listener, target.new)
-    runner
+    worker   = MessagePack::RPC::Server.new
+    worker.listen(listener, target.new)
+    worker
   end
 end
 
