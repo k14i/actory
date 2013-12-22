@@ -16,7 +16,9 @@ gem install actory
 * High concurrency
 * Low overheads
 
-### Sending a message to each receiver to make it deal with the message.
+### System-wide
+
+#### Sending a message to each receiver to make it deal with the message.
 
 `````
   +--------+
@@ -40,7 +42,7 @@ gem install actory
         +----------------+             +----------------------+              +----------------+
 `````
 
-### Receiving each returned value at once.
+#### Receiving each returned value at once.
 
 `````
   +--------+
@@ -64,7 +66,7 @@ gem install actory
         +----------------+             +----------------------+              +----------------+
 `````
 
-### Jobs can be assigned flexibly
+#### Jobs can be assigned flexibly.
 
 `````
   +--------+
@@ -150,47 +152,47 @@ gem install actory
 ### config/receiver.yml
 
 * protocol
-... "tcp" or "udp"
+  * "tcp" or "udp"
 * address
-... Binding IP Address.
+  * Binding IP Address.
 * port
-... Port number to begin increment.
+  * Port number to begin increment.
 * shared_key
-... A pre-shared key string to establish connections with a sender.
+  * A pre-shared key string to establish connections with a sender.
 * log
-..* type
-..... The type of the log. "stdout", "file" or "both".
-..* level
-..... A log level. "fatal", "error", "warn", "info" or "debug".
-..* target
-..... The log file path, used when the "type" is specified as "file" or "both".
+  * type
+    * The type of the log. "stdout", "file" or "both".
+  * level
+    * A log level. "fatal", "error", "warn", "info" or "debug".
+  * target
+    * The log file path, used when the "type" is specified as "file" or "both".
 
 ### config/sender.yml
 
 * actors
-... A list of actors. The format is <host name or ip address>:<port>.
+  * A list of actors. The format is <host name or ip address>:<port>.
 * policy
-... The policy to select actors and assign a message to them. "even", "random" or "safe-random".
+  * The policy to select actors and assign a message to them. "even", "random" or "safe-random".
 * timeout
-... Connection timeout value for msgpack-rpc.
+  * Connection timeout value for msgpack-rpc.
 * get_interval
-... An interval to retry the get method for msgpack-rpc.
+  * An interval to retry the get method for msgpack-rpc.
 * auth
-..* shared_key
-..... A pre-shared key string to establish connections with each receiver.
-..* timeout
-..... Authentication timeout with each receiver.
+  * shared_key
+    * A pre-shared key string to establish connections with each receiver.
+  * timeout
+    * Authentication timeout with each receiver.
 * show_progress
-... If it is true, the sender shows you a progress bar.
+  * If it is true, the sender shows you a progress bar.
 * reload_receiver_plugins
-... If it is true, the sender force each receiver reload plugins even in running.
+  * If it is true, the sender force each receiver reload plugins even in running.
 * log
-..* type
-..... The type of the log. "stdout", "file" or "both".
-..* level
-..... A log level. "fatal", "error", "warn", "info" or "debug".
-..* target
-....* The log file path, used when the "type" is specified as "file" or "both".
+  * type
+    * The type of the log. "stdout", "file" or "both".
+  * level
+    * A log level. "fatal", "error", "warn", "info" or "debug".
+  * target
+    * The log file path, used when the "type" is specified as "file" or "both".
 
 ## Usage
 
