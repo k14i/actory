@@ -11,4 +11,4 @@ reload_receiver_plugins: true
 log:
   type: "stdout" #stdout,file,both
   level: "info" #fatal,error,warn,info,debug
-  target: "log/sender.log"
+  target: "/var/log/actory/sender.log"

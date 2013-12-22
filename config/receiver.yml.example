@@ -5,4 +5,4 @@ shared_key: "a pre-shared key"
 log:
   type: "stdout" #stdout,file,both
   level: "info" #fatal,error,warn,info,debug
-  target: "log/receiver.log"
+  target: "/var/log/actory/receiver.log"
