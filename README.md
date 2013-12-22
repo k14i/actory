@@ -9,6 +9,44 @@ Actor model like, concurrent and distributed framework for Ruby.
 gem install actory
 `````
 
+## Setup
+
+`````
+path_to_actory="/PATH/TO/GEMS/actory-0.0.1"
+export PATH=$PATH:$path_to_actory/bin
+`````
+
+* /PATH/TO/GEMS above means the path to the directory of gem files. e.g. $HOME/.rvm/gems/ruby-2.0.0-p247@global/gems
+
+### System-wide setup with the root permission
+
+`````
+sudo mkdir -p /etc/actory
+sudo cp -p $path_to_actory/config/receiver.yml.example /etc/actory
+sudo cp -p $path_to_actory/config/sender.yml.example /etc/actory
+`````
+
+### System-wide setup under the RubyGems
+
+`````
+cd $path_to_actory/config
+cp receiver.yml.example receiver.yml
+cp sender.yml.example sender.yml
+`````
+
+### Setup inside of each indivisual project
+
+`````
+echo "gem actory" >> Gemfile
+bundle install --path vendor/bundle
+cp ./vendor/bundle
+path_to_actory="vendor/bundle/ruby/2.0.0/gems/actory-0.0.1"
+cp $path_to_actory/config/receiver.yml.example $path_to_actory/config/receiver.yml
+cp $path_to_actory/config/sender.yml.example $path_to_actory/config/sender.yml
+sed -i '' s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g $path_to_actory/config/global.yml
+`````
+
+
 ## Architecture
 
 * Actor model like message passing API
@@ -201,13 +239,13 @@ gem install actory
 #### Foreground
 
 `````
-ruby bin/receiver.rb
+actory-receiver
 `````
 
 #### Background
 
 `````
-ruby bin/receiver.rb -d
+actory-receiver -d
 `````
 
 ### Sender

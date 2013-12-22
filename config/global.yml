@@ -1,0 +1,2 @@
+config: "/etc/actory"
+#config: "../../../config"

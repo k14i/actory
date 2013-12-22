@@ -2,7 +2,7 @@ module Actory
 module Receiver
 
   class Base < Actory::Base
-    RECEIVER = YAML.load_file(File.expand_path("../../../config/receiver.yml", __FILE__))
+    RECEIVER = YAML.load_file(File.expand_path(File.join(GLOBAL['config'], "/receiver.yml"), __FILE__))
     @@logger = Logger.new(get_logger_output(RECEIVER['log']['type'], RECEIVER['log']['target']))
     @@logger.level = get_logger_level(RECEIVER['log']['level'])
   end
