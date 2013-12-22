@@ -32,6 +32,7 @@ sudo cp -p $path_to_actory/config/sender.yml.example /etc/actory
 cd $path_to_actory/config
 cp receiver.yml.example receiver.yml
 cp sender.yml.example sender.yml
+sed -i '' "s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g" global.yml
 `````
 
 ### Setup inside of each indivisual project
@@ -43,7 +44,7 @@ cp ./vendor/bundle
 path_to_actory="vendor/bundle/ruby/2.0.0/gems/actory-0.0.1"
 cp $path_to_actory/config/receiver.yml.example $path_to_actory/config/receiver.yml
 cp $path_to_actory/config/sender.yml.example $path_to_actory/config/sender.yml
-sed -i '' s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g $path_to_actory/config/global.yml
+sed -i '' "s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g" $path_to_actory/config/global.yml
 `````
 
 
