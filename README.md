@@ -121,28 +121,28 @@ gem install actory
 ### Sender
 
 `````
-  +-----------------------------------------------------+ +-----------------------------+
-  | a sender                                            | | receiver(s)                 |
-  |                                                     | |                             |
-  | +------------+                                      | |                             |
-  | | Dispatcher |                                      | |                             |
-  | +------------+                                      | |                             |
-  |   |                                 +-------------+ | |                             |
-  |   | spawn when instantized          |     CPU     | | |                             |
-  |   |   +-------------------------+   | +---------+ | | | +-------------------------+ |
-  |   +-->|Msgpack::RPC::Client #1/n|-->| |core #1/n|------>|Msgpack::RPC::Server #1/m| |
-  |   |   +-------------------------+   | +---------+ | | | +-------------------------+ |
-  |   |   +-------------------------+   | +---------+ | | | +-------------------------+ |
-  |   +-->|Msgpack::RPC::Client #2/n|-->| |core #2/n|------>|Msgpack::RPC::Server #2/m| |
-  |   |   +-------------------------+   | +---------+ | | | +-------------------------+ |
-  |   |              :                  |      :      | | |            :                |
-  |   |   +-------------------------+   | +---------+ | | | +-------------------------+ |
-  |   `-->|Magpack::RPC::Client #n/n|-->| |core #n/n|------>|Msgpack::RPC::Server #m/m| |
-  |       +-------------------------+   | +---------+ | | | +-------------------------+ |
-  |                                     |             | | |                             |
-  |                                     +-------------+ | |                             |
-  |                                                     | |                             |
-  +-----------------------------------------------------+ +-----------------------------+
+  +-----------------------------------------------------+  +-----------------------------+
+  | a sender                                            |  | receiver(s)                 |
+  |                                                     |  |                             |
+  | +------------+                                      |  |                             |
+  | | Dispatcher |                                      |  |                             |
+  | +------------+                                      |  |                             |
+  |   |                                 +-------------+ |  |                             |
+  |   | spawn when instantized          |     CPU     | |  |                             |
+  |   |   +-------------------------+   | +---------+ | |  | +-------------------------+ |
+  |   +-->|Msgpack::RPC::Client #1/n|-->| |core #1/n|------->|Msgpack::RPC::Server #1/m| |
+  |   |   +-------------------------+   | +---------+ | |  | +-------------------------+ |
+  |   |   +-------------------------+   | +---------+ | |  | +-------------------------+ |
+  |   +-->|Msgpack::RPC::Client #2/n|-->| |core #2/n|------->|Msgpack::RPC::Server #2/m| |
+  |   |   +-------------------------+   | +---------+ | |  | +-------------------------+ |
+  |   |              :                  |      :      | |  |            :                |
+  |   |   +-------------------------+   | +---------+ | |  | +-------------------------+ |
+  |   `-->|Magpack::RPC::Client #n/n|-->| |core #n/n|------->|Msgpack::RPC::Server #m/m| |
+  |       +-------------------------+   | +---------+ | |  | +-------------------------+ |
+  |                                     |             | |  |                             |
+  |                                     +-------------+ |  |                             |
+  |                                                     |  |                             |
+  +-----------------------------------------------------+  +-----------------------------+
 `````
 
 ## Configuration
@@ -150,47 +150,47 @@ gem install actory
 ### config/receiver.yml
 
 * protocol
-** "tcp" or "udp"
+..* "tcp" or "udp"
 * address
-** Binding IP Address.
+..* Binding IP Address.
 * port
-** Port number to begin increment.
+..* Port number to begin increment.
 * shared_key
-** A pre-shared key string to establish connections with a sender.
+..* A pre-shared key string to establish connections with a sender.
 * log
-** type
-*** The type of the log. "stdout", "file" or "both".
-** level
-*** A log level. "fatal", "error", "warn", "info" or "debug".
-** target
-*** The log file path, used when the "type" is specified as "file" or "both".
+..* type
+....* The type of the log. "stdout", "file" or "both".
+..* level
+....* A log level. "fatal", "error", "warn", "info" or "debug".
+..* target
+....* The log file path, used when the "type" is specified as "file" or "both".
 
 ### config/sender.yml
 
 * actors
-** A list of actors. The format is <host name or ip address>:<port>.
+..* A list of actors. The format is <host name or ip address>:<port>.
 * policy
-** The policy to select actors and assign a message to them. "even", "random" or "safe-random".
+..* The policy to select actors and assign a message to them. "even", "random" or "safe-random".
 * timeout
-** Connection timeout value for msgpack-rpc.
+..* Connection timeout value for msgpack-rpc.
 * get_interval
-** An interval to retry the get method for msgpack-rpc.
+..* An interval to retry the get method for msgpack-rpc.
 * auth
-** shared_key
-*** A pre-shared key string to establish connections with each receiver.
-** timeout
-*** Authentication timeout with each receiver.
+..* shared_key
+....* A pre-shared key string to establish connections with each receiver.
+..* timeout
+....* Authentication timeout with each receiver.
 * show_progress
-** If it is true, the sender shows you a progress bar.
+..* If it is true, the sender shows you a progress bar.
 * reload_receiver_plugins
-** If it is true, the sender force each receiver reload plugins even in running.
+..* If it is true, the sender force each receiver reload plugins even in running.
 * log
-** type
-*** The type of the log. "stdout", "file" or "both".
-** level
-*** A log level. "fatal", "error", "warn", "info" or "debug".
-** target
-*** The log file path, used when the "type" is specified as "file" or "both".
+..* type
+....* The type of the log. "stdout", "file" or "both".
+..* level
+....* A log level. "fatal", "error", "warn", "info" or "debug".
+..* target
+....* The log file path, used when the "type" is specified as "file" or "both".
 
 ## Usage
 
