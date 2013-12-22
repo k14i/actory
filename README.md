@@ -258,6 +258,21 @@ end
 
 If you have created a plugin, put it just under the lib/actory/receiver/plugin directory. Then it will be automatically loaded even in the receiver running.
 
+And then, you can call the method from a sender like following:
+
+`````ruby
+require 'actory'
+dispacher = Actory::Sender::Dispatcher.new
+res = dispatcher.message("hello", "world")
+`````
+
+The response in a hash will be like following:
+
+`````ruby
+p res
+{"127.0.0.1:18800"=>["Hello world."], "192.168.1.1:18800"=>["Hello world."], ..., "192.168.1.3:18807"=>["Hello world"]}
+`````
+
 ## License
 
 Apache License, Version 2.0
