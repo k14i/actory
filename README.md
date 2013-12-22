@@ -48,13 +48,13 @@ gem install actory
   +--------+
   |user app|
   +--------+
-    ^ a hash value in {"host:port" => return_values, ... }
+    ^ a hash value in {"host:port" => [return_value(s), ...], ... }
     |
   +------------------+
   |Sender::Dispatcher|
   +------------------+
-    ^                                                           execute
-    |   +----------------+ msgpack-rpc +----------------------+ method(args) +----------------+
+    ^                                                              return
+    |   +----------------+ msgpack-rpc +----------------------+   value(s)   +----------------+
     +---|sub-process #1/n|<------------|Receiver::EventHandler|<-------------|Receiver::Plugin|
     |   +----------------+             +----------------------+              +----------------+
     |   +----------------+             +----------------------+              +----------------+
