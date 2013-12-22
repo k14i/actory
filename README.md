@@ -170,7 +170,7 @@ gem install actory
 ### config/sender.yml
 
 * actors
-  * A list of actors. The format is <host name or ip address>:<port>.
+  * A list of actors. The format is "host_name_or_ip_address:port".
 * policy
   * The policy to select actors and assign a message to them. "even", "random" or "safe-random".
 * timeout
