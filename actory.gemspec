@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
+  requires = []
   requires += ['msgpack-rpc', 'parallel', 'facter', 'progressbar']
   requires.each do |name|
     s.add_development_dependency name

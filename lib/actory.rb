@@ -1,10 +1,14 @@
+require 'yaml'
+
 module Actory
 
   class Base
+    GLOBAL = YAML.load_file(File.expand_path("../../config/global.yml", __FILE__))
+
     def self.get_logger_output(type="stdout", target=nil)
       return nil unless type
       out = nil
-      file = File.open(target, "a") if target
+      file = File.open(target, "a") if %w[file both].include?(type)
       case type.downcase
       when "stdout"
         out = STDOUT
@@ -58,6 +62,5 @@ end #Actory
 require 'rubygems'
 require 'msgpack/rpc'
 require 'parallel'
-require 'yaml'
 require 'logger'
 Dir[File.join(File.dirname(__FILE__), "actory/*.rb")].each { |f| require_relative f }
