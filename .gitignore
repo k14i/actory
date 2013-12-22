@@ -1,2 +1,4 @@
 receiver.yml
 sender.yml
+*.log*
+/tmp

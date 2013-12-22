@@ -15,7 +15,7 @@ end.parse!
 begin
   puts "Starting Actory Receiver (PID = #{Process.pid}, PGROUP = #{Process.getpgrp})"
   Process.daemon if options[:daemon]
-  Actory::Receiver::Runner.new
+  Actory::Receiver::Worker.new
 rescue
   retry
 end
