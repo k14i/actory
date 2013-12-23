@@ -6,7 +6,7 @@ require 'progressbar'
 METHOD = "pi"
 ARGS   = (1..1000).to_a
 
-require_relative "../lib/actory/receiver/plugin/example_#{METHOD}"
+require_relative '../lib/actory'
 require_relative './lib/benchmark'
 
 res = []
