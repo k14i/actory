@@ -87,7 +87,7 @@ sed -i '' "s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g" $path_to_actory/config/gl
   +--------+
   |user app|
   +--------+
-    ^ a hash value in {"host:port" => [return_value(s), ...], ... }
+    ^ an array value in [{"host:port" => [return_value(s), ...]}, ... ]
     |
   +------------------+
   |Sender::Dispatcher|
@@ -349,11 +349,11 @@ dispacher = Actory::Sender::Dispatcher.new
 res = dispatcher.message("hello", ["world", "actory"])
 `````
 
-The response in a hash will be like following:
+The response in an array will be like following:
 
 `````ruby
 p res
-{"127.0.0.1:18800"=>["Hello world."], "192.168.1.1:18800"=>["Hello actory."]}
+[{"127.0.0.1:18800"=>["Hello world."]}, {"192.168.1.1:18800"=>["Hello actory."]}]
 `````
 
 ## License
