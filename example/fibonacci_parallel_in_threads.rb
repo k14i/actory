@@ -6,7 +6,7 @@ require 'progressbar'
 METHOD = "fibonacci"
 ARGS   = (1..34).to_a
 
-require_relative "../lib/actory/receiver/plugin/example_#{METHOD}"
+require_relative '../lib/actory'
 require_relative './lib/benchmark'
 
 res = []
