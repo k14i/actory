@@ -63,22 +63,22 @@ sed -i '' "s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g" $path_to_actory/config/gl
   +--------+
   |user app|
   +--------+
-    | message(method, arguments)
+    | message(method, [args]) # [args].size # => i
     v
   +------------------+
   |Sender::Dispatcher|
   +------------------+
     |                                                           execute
-    |   +----------------+ msgpack-rpc +----------------------+ method(args) +----------------+
-    +-->|sub-process #1/n|------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-    |   +----------------+             +----------------------+              +----------------+
-    |   +----------------+             +----------------------+              +----------------+
-    +-->|sub-process #2/n|------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-    |   +----------------+             +----------------------+              +----------------+
-    |         :                                 :                                     :
-    |   +----------------+             +----------------------+              +----------------+
-    `-->|sub-process #n/n|------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-        +----------------+             +----------------------+              +----------------+
+    |   +----------------+ msgpack-rpc +----------------------+ method(arg[0]) +----------------+
+    +-->|sub-process #1/n|------------>|Receiver::EventHandler|--------------->|Receiver::Plugin|
+    |   +----------------+             +----------------------+ execute        +----------------+
+    |   +----------------+             +----------------------+ method(arg[1]) +----------------+
+    +-->|sub-process #2/n|------------>|Receiver::EventHandler|--------------->|Receiver::Plugin|
+    |   +----------------+             +----------------------+       :        +----------------+
+    |         :                                 :               execute                :
+    |   +----------------+             +----------------------+ method(arg[i]) +----------------+
+    `-->|sub-process #n/n|------------>|Receiver::EventHandler|--------------->|Receiver::Plugin|
+        +----------------+             +----------------------+                +----------------+
 `````
 
 #### Receiving each returned value at once.
@@ -111,25 +111,69 @@ sed -i '' "s/\/etc\/actory/\.\.\/\.\.\/\.\.\/config/g" $path_to_actory/config/gl
   +--------+
   |user app|
   +--------+
-    | message(method, arguments)
+    | message(method, [args]) # [args].size # => i; i > n # => true
     v
   +------------------+
   |Sender::Dispatcher|
   +------------------+
     |                                                           execute
-    |   +----------------+ msgpack-rpc +----------------------+ method(args) +----------------+
-    +-->|sub-process #1/n|------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-    |   |                |             +----------------------+              +----------------+
-    |   |                |             +----------------------+              +----------------+
-    +-->|                |------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-    |   +----------------+             +----------------------+              +----------------+
-    |   +----------------+             +----------------------+              +----------------+
-    +-->|sub-process #2/n|------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-    |   +----------------+             +----------------------+              +----------------+
-    |         :                                 :                                     :
-    |   +----------------+             +----------------------+              +----------------+
-    `-->|sub-process #n/n|------------>|Receiver::EventHandler|------------->|Receiver::Plugin|
-        +----------------+             +----------------------+              +----------------+
+    |   +----------------+ msgpack-rpc +----------------------+ method(arg[0])   +----------------+
+    +-->|sub-process #1/n|------------>|Receiver::EventHandler|----------------->|Receiver::Plugin|
+    |   |                |             +----------------------+ execute          +----------------+
+    |   |                |             +----------------------+ method(arg[i])   +----------------+
+    +-->|                |------------>|Receiver::EventHandler|----------------->|Receiver::Plugin|
+    |   +----------------+             +----------------------+ execute          +----------------+
+    |   +----------------+             +----------------------+ method(arg[1])   +----------------+
+    +-->|sub-process #2/n|------------>|Receiver::EventHandler|----------------->|Receiver::Plugin|
+    |   +----------------+             +----------------------+       :          +----------------+
+    |         :                                 :               execute                   :
+    |   +----------------+             +----------------------+ method(arg[i-1]) +----------------+
+    `-->|sub-process #n/n|------------>|Receiver::EventHandler|----------------->|Receiver::Plugin|
+        +----------------+             +----------------------+                  +----------------+
+`````
+
+`````
+  +--------+
+  |user app|
+  +--------+
+    | message(method, [args]) # [args].size # => i; n > i # => true
+    v
+  +------------------+
+  |Sender::Dispatcher|
+  +------------------+
+    |                                                           execute
+    |   +----------------+ msgpack-rpc +----------------------+ method(arg[0]) +----------------+
+    +-->|sub-process #1/n|------------>|Receiver::EventHandler|--------------->|Receiver::Plugin|
+    |   +----------------+             +----------------------+ execute        +----------------+
+    |   +----------------+             +----------------------+ method(arg[i]) +----------------+
+    `-->|sub-process #2/n|------------>|Receiver::EventHandler|--------------->|Receiver::Plugin|
+        +----------------+             +----------------------+                +----------------+
+              :                                 :                                       :
+        +----------------+             +----------------------+                +----------------+
+        |sub-process #n/n|             |Receiver::EventHandler|                |Receiver::Plugin|
+        +----------------+             +----------------------+                +----------------+
+`````
+
+`````
+  +--------+
+  |user app|
+  +--------+
+    | message(method, [args]) # [args].size # => 1
+    v
+  +------------------+
+  |Sender::Dispatcher|
+  +------------------+
+    |                                                           execute
+    |   +----------------+ msgpack-rpc +----------------------+ method(arg[0]) +----------------+
+    `-->|sub-process #1/n|------------>|Receiver::EventHandler|--------------->|Receiver::Plugin|
+        +----------------+             +----------------------+                +----------------+
+        +----------------+             +----------------------+                +----------------+
+        |sub-process #2/n|             |Receiver::EventHandler|                |Receiver::Plugin|
+        +----------------+             +----------------------+                +----------------+
+              :                                 :                                       :
+        +----------------+             +----------------------+                +----------------+
+        |sub-process #n/n|             |Receiver::EventHandler|                |Receiver::Plugin|
+        +----------------+             +----------------------+                +----------------+
 `````
 
 ### Receiver
@@ -302,14 +346,14 @@ And then, you can call the method from a sender like following:
 `````ruby
 require 'actory'
 dispacher = Actory::Sender::Dispatcher.new
-res = dispatcher.message("hello", "world")
+res = dispatcher.message("hello", ["world", "actory"])
 `````
 
 The response in a hash will be like following:
 
 `````ruby
 p res
-{"127.0.0.1:18800"=>["Hello world."], "192.168.1.1:18800"=>["Hello world."], ..., "192.168.1.3:18807"=>["Hello world"]}
+{"127.0.0.1:18800"=>["Hello world."], "192.168.1.1:18800"=>["Hello actory."]}
 `````
 
 ## License
