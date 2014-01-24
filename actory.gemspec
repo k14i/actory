@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name          = "actory"
-  s.version       = "0.0.2"
+  s.version       = "0.0.3"
   s.summary       = %q{Actor model like, concurrent and distributed framework for Ruby.}
   s.description   = %q{Actor model like, concurrent and distributed framework for Ruby.}
   s.authors       = ["Keisuke Takahashi"]
