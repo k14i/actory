@@ -10,10 +10,8 @@ class Dispatcher < Base
     @receiver_count = 0
     @system_info = []
     @my_processor_count = Parallel.processor_count
-    ret = initial_handshaking(actors)
-    raise StandardError if ret == 0
-    count = establish_connections
-    raise StandardError if count == 0
+    initial_handshaking(actors)
+    establish_connections
   rescue => e
     @@logger.error Actory::Errors::Generator.new.json(level: "error", message: "Initialization failed.", backtrace: $@)
     exit 1
@@ -36,7 +34,7 @@ class Dispatcher < Base
       begin
         actor.send("receive", "reload") if SENDER['reload_receiver_plugins']
         res = actor.send("receive", method, arg)
-        sleep SENDER['get_interval']
+        sleep SENDER['get_interval'] # @todo Assign hard-corded parameter if no param defined.
         ret = res.get
         ret.flatten!
         {actor.address.to_s => ret}
@@ -47,6 +45,9 @@ class Dispatcher < Base
       end
     end
     results.flatten
+  rescue => e
+    puts $@, e
+    raise StandardError
   end
 
   private
@@ -57,16 +58,17 @@ class Dispatcher < Base
       next unless actor.class == String
       actor = actor.gsub(/:/, " ").split
       host = actor[0]
-      port = actor[1].to_i
+      port = actor[1].to_i # @todo Assign default port if no port specified.
       @cli = MessagePack::RPC::Client.new(host, port)
-      @cli.timeout = SENDER['auth']['timeout']
-      ret = get_trusted_hosts(host)
-      next unless ret
-      @system_info << {:host => host, :system_info => get_system_info}
+      @cli.timeout = SENDER['auth']['timeout'] # @todo Assign hard-corded parameter if no param defined.
+      next unless get_trusted_hosts(host)
+      # @todo Put the system_info to use.
+      # @system_info << {:host => host, :system_info => get_system_info}
       get_receiver_count
     end
   rescue => e
     puts $@, e
+    raise StandardError
   end
 
   def establish_connections
@@ -81,6 +83,7 @@ class Dispatcher < Base
     else
       establish_connections_evenly
     end
+    raise StandardError if @actors.count == 0
     @actors.count
   end
 
@@ -102,9 +105,10 @@ class Dispatcher < Base
         actor = actor.gsub(/:/, " ").split
         host = actor[0]
         next unless trusted_hosts.include?(host)
-        port = actor[1].to_i
+        port = actor[1].to_i # @todo Assign default port if no port specified.
+        # @todo Examine disconnection existing connections used in in.initial_handshaking.
         cli = MessagePack::RPC::Client.new(host, port + n)
-        cli.timeout = SENDER['timeout']
+        cli.timeout = SENDER['timeout'] # @todo Assign hard-corded parameter if no param defined.
         @actors << cli
       end
     end
@@ -127,18 +131,20 @@ class Dispatcher < Base
   def get_receiver_count
     res = @cli.send("receive", "processor_count")
     @receiver_count += res.get[0] if res.get[0]
+  rescue
+    return -1
   end
 
   def assign_jobs(args)
     num = 0
     params = {}
+    return params if args[0].nil? or @actors.empty? or @my_processor_count.nil?
     actors = @actors.sample(@my_processor_count)
     args.each do |arg|
-      next if params.has_key?(arg)
-      num = 0 unless actors[num]
-      actor = actors[num]
+      next if params.has_key?(arg) # @note Skip duplicated keys.
+      num = 0 unless actors[num] # @note Make the actors loop reset if the pointer reaches the end.
+      params.merge!(arg => actors[num]) # @note Assign a job to an actor.
       num += 1
-      params.merge!(arg => actor)
     end
     @@logger.debug params
     params
